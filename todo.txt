@@ -1,0 +1,58 @@
+[必須変更]
+- flake.nix:
+  - hostname = "nixos" を自分のホスト名に変更
+  - username = "user" を自分のユーザー名に変更
+- home/development.nix:
+  - programs.git.userName を変更
+  - programs.git.userEmail を変更
+- home/noctalia.nix:
+  - wallpaper.directory を実際の壁紙ディレクトリに変更
+- hardware-configuration.nix:
+  - 実機で生成したファイルを配置（下記「初回セットアップ」参照）
+
+[初回セットアップ]
+1) ハードウェア設定を生成して配置
+   - 例:
+     sudo nixos-generate-config --show-hardware-config > hardware-configuration.nix
+2) （任意）壁紙ディレクトリを作成
+   - mkdir -p ~/Pictures/Wallpapers
+3) （任意）agenix を使う場合は鍵と secrets を準備
+   - secrets/secrets.nix に公開鍵を定義
+   - agenix -e secrets/restic-password.age で暗号化ファイルを作成
+
+[適用手順]
+1) flake.lock 生成 / 更新
+   - nix flake update
+2) ドライビルド
+   - nixos-rebuild dry-build --flake .#nixos
+3) 適用
+   - sudo nixos-rebuild switch --flake .#nixos
+4) （適用後）nh を使う場合
+   - nh os switch .
+
+[適用後の確認]
+- Zen Browser の desktop ファイル名確認
+  - ls ~/.nix-profile/share/applications/ | grep zen
+  - home/apps.nix の MIME 関連が実際の desktop 名（zen.desktop / zen-browser.desktop）と一致しているか確認
+- kanata のキー名確認
+  - kanata --list-keys
+  - zenkakuhankaku が実機キー名と一致しているか確認
+- Noctalia の設定反映確認
+  - noctalia-shell ipc call state all | jq .settings
+- niri セッション起動確認
+  - greetd から niri-session でログインできることを確認
+
+[トラブルシュート]
+- ビルド失敗時:
+  - エラーメッセージに出る該当 .nix を修正して再 dry-build
+- IME が効かない:
+  - fcitx5 が起動しているか確認
+  - GTK_IM_MODULE / QT_IM_MODULE / XMODIFIERS を確認
+- Portal のファイル選択が期待どおりでない:
+  - xdg.portal の FileChooser 設定を確認
+  - termfilepickers 側の導入状況を確認
+
+[運用メモ]
+- secrets は平文でコミットしない
+- system.stateVersion / home.stateVersion はむやみに変更しない
+- 変更は小さく分けて適用し、毎回 dry-build する
