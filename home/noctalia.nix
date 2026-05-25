@@ -6,7 +6,7 @@
     settings = {
       settingsVersion = 0;
       bar = {
-        barType = "floating";
+        barType = "Floating";
         position = "left";
         monitors = [ ];
         density = "default";
