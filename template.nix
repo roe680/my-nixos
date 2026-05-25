@@ -1,7 +1,7 @@
 { ... }:
 {
   nix.registry.templates = {
-    flake = {
+    to= {
       type = "path";
       path = ./templates;
     };

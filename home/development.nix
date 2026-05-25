@@ -5,8 +5,8 @@
     enable = true;
     settings = {
       user = {
-        name = "Your Name"; # ← 変更
-        email = "your@email.com"; # ← 変更
+        name = "roe"; # ← 変更
+        email = "dayeziji192@gmail.com"; # ← 変更
       };
       init.defaultBranch = "main";
       pull.rebase = true;
@@ -23,7 +23,7 @@
   };
 
   programs.gitui.enable = true;
-
+  
   programs.mise = {
     enable = true;
     enableNushellIntegration = true;

@@ -7,8 +7,17 @@
 {
   environment.systemPackages =
     with pkgs;
-    [ ]
-    # Rust (cargo) 系のフラッシャ
+    [
+      python3
+      python3Packages.pip
+      python3Packages.virtualenv
+      flex
+      bison
+      gperf
+      wget
+    ]
+    ++ lib.optionals (pkgs ? espup) [ espup ]
+    ++ lib.optionals (pkgs ? ldproxy) [ ldproxy ] # Rust (cargo) 系のフラッシャ
     ++ lib.optionals (pkgs ? espflash) [ espflash ]
     ++ lib.optionals (pkgs ? cargo-espflash) [ cargo-espflash ]
     ++ lib.optionals (pkgs ? esp-idf) [ esp-idf ]

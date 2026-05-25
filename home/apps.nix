@@ -17,7 +17,6 @@
     obsidian
     gnome-font-viewer
     aseprite
-    cider
     blender
     zed-editor
     vlc
