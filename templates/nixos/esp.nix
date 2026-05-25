@@ -8,6 +8,7 @@
   environment.systemPackages =
     with pkgs;
     [
+      ccache
       python3
       python3Packages.pip
       python3Packages.virtualenv
