@@ -20,7 +20,6 @@
     ++ lib.optionals (pkgs ? espup) [ espup ]
     ++ lib.optionals (pkgs ? ldproxy) [ ldproxy ] # Rust (cargo) 系のフラッシャ
     ++ lib.optionals (pkgs ? espflash) [ espflash ]
-    ++ lib.optionals (pkgs ? cargo-espflash) [ cargo-espflash ]
     ++ lib.optionals (pkgs ? esp-idf) [ esp-idf ]
     ++ lib.optionals (pkgs ? openocd) [ openocd ]
     ++ lib.optionals (pkgs ? minicom) [ minicom ]

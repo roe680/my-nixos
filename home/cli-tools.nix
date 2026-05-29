@@ -112,5 +112,6 @@
     aichat
     tealdeer
     opencode
+    home-manager
   ];
 }

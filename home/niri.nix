@@ -94,13 +94,13 @@
           "-l"
           "1.0"
           "@DEFAULT_AUDIO_SINK@"
-          "0.1+"
+          "0.02+"
         ];
         "XF86AudioLowerVolume".action.spawn = [
           "wpctl"
           "set-volume"
           "@DEFAULT_AUDIO_SINK@"
-          "0.1-"
+          "0.02-"
         ];
         "XF86AudioMute".action.spawn = [
           "wpctl"

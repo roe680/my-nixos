@@ -15,6 +15,8 @@
 
   home.packages = with pkgs; [
     obsidian
+    freedoom
+    gzdoom
     gnome-font-viewer
     aseprite
     blender

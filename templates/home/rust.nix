@@ -12,7 +12,6 @@
 
   home.packages = with pkgs; [
     rustup
-    rust-analyzer
     rustfmt
     cargo-flamegraph
     cargo-binutils
