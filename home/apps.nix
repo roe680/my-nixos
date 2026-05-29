@@ -14,6 +14,8 @@
   ];
 
   home.packages = with pkgs; [
+    arduino-ide
+
     obsidian
     freedoom
     gzdoom

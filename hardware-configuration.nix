@@ -15,6 +15,25 @@
     (modulesPath + "/installer/scan/not-detected.nix")
   ];
   services.asusd.enable = true;
+
+  services.udev.packages = [ pkgs.probe-rs-tools ];
+  services.udev.extraRules = ''
+    # Arduino Uno / Mega 2560 など
+    SUBSYSTEMS=="usb", ATTRS{idVendor}=="2341", MODE:="0666", GROUP="plugdev"
+    # 一般的なUSBシリアル変換チップ (CH340など)
+    SUBSYSTEMS=="usb", ATTRS{idVendor}=="1a86", MODE:="0666", GROUP="plugdev"
+    # Arduino Uno R4 Minima (通常モード)
+    SUBSYSTEMS=="usb", ATTRS{idVendor}=="2341", ATTRS{idProduct}=="0069", MODE:="0666", GROUP="plugdev"
+    # Arduino Uno R4 Minima (ブートローダーモード)
+    SUBSYSTEMS=="usb", ATTRS{idVendor}=="2341", ATTRS{idProduct}=="006d", MODE:="0666", GROUP="plugdev"
+    # CP210x (Silabs) USB-to-UART
+    SUBSYSTEMS=="usb", ATTRS{idVendor}=="10c4", MODE:="0666", GROUP="dialout"
+    # CH340 (QinHeng) USB-to-UART
+    SUBSYSTEMS=="usb", ATTRS{idVendor}=="1a86", MODE:="0666", GROUP="dialout"
+    # Espressif USB JTAG/Serial (ESP32-S3 など)
+    SUBSYSTEMS=="usb", ATTRS{idVendor}=="303a", MODE:="0666", GROUP="dialout"
+  '';
+
   environment.systemPackages = with pkgs; [
     asusctl
   ];
