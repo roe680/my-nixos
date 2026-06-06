@@ -1,7 +1,32 @@
 { pkgs, ... }:
-
+let
+  fzfPreview = pkgs.writeShellScript "fzf-preview" ''
+    TARGET="$1"
+    if [ -d "$TARGET" ]; then
+      ${pkgs.tree}/bin/tree -C "$TARGET" | head -n 100
+      exit 0
+    fi
+    EXT=$(echo "''${TARGET##*.}" | tr '[:upper:]' '[:lower:]')
+    case "$EXT" in
+      zip) ${pkgs.p7zip}/bin/7z l "$TARGET" || ${pkgs.unzip}/bin/unzip -l "$TARGET" 2>/dev/null ;;
+      tar|tgz|gz|bz2|xz) ${pkgs.gnutar}/bin/tar -tf "$TARGET" 2>/dev/null | head -n 100 ;;
+      png|jpg|jpeg|gif|pdf|exe|elf) ${pkgs.file}/bin/file "$TARGET" ;;
+      *)
+        if ${pkgs.file}/bin/file "$TARGET" | grep -q text; then
+          ${pkgs.bat}/bin/bat --style=numbers --color=always --line-range :500 "$TARGET"
+        else
+          ${pkgs.file}/bin/file "$TARGET"
+        fi ;;
+    esac
+  '';
+in
 {
   environment.sessionVariables = {
+      FZF_DEFAULT_OPTS =
+    "--layout=reverse --height=60% --border --info=inline " +
+    "--color 'bg+:#313244,spinner:#f5e0dc,hl:#f38ba8,fg:#cdd6f4,header:#f38ba8,info:#cba6f7,pointer:#f5e0dc,marker:#b4befe,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8,border:#89b4fa' " +
+    "--preview '${fzfPreview} {}'";
+    
     STEAM_FORCE_DESKTOP_WM = "1";
     STEAM_WAYLAND = "1";
     LIBVA_DRIVER_NAME = "iHD"; # Arc は iHD ドライバーを明示指定
@@ -35,6 +60,8 @@
       user = "greeter";
     };
   };
+  virtualisation.waydroid.enable = true;
+  networking.firewall.trustedInterfaces = [ "waydroid0"];
 
   environment.systemPackages = with pkgs; [
     tuigreet

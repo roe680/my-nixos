@@ -1,4 +1,10 @@
-{ pkgs, inputs,home, ... }:
+{
+  config,
+  pkgs,
+  inputs,
+  home,
+  ...
+}:
 
 {
   programs.alacritty = {
@@ -73,7 +79,10 @@
   programs.nushell = {
     enable = true;
     extraConfig = ''
-      $env.config.show_banner = false
+        $env.config.show_banner = false
+          # config.nu に自動で追記される設定
+      # Nixの変数を使って ~/.config/nushell/scripts/helix++.nu を絶対パスに変換して読み込む
+      use "${config.home.homeDirectory}/.config/nushell/scripts/helix++.nu" *
     '';
   };
 
@@ -105,8 +114,6 @@
     };
   };
 
-  
-
   programs.zoxide = {
     enable = true;
     enableNushellIntegration = true;
@@ -117,5 +124,5 @@
     enableNushellIntegration = true;
     nix-direnv.enable = true;
   };
-  home.packages = with pkgs; [nix-direnv];
+  home.packages = with pkgs; [ nix-direnv ];
 }

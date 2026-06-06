@@ -6,6 +6,7 @@
   lib,
   pkgs,
   modulesPath,
+  username,
   ...
 }:
 
@@ -22,18 +23,26 @@
     SUBSYSTEMS=="usb", ATTRS{idVendor}=="2341", MODE:="0666", GROUP="plugdev"
     # 一般的なUSBシリアル変換チップ (CH340など)
     SUBSYSTEMS=="usb", ATTRS{idVendor}=="1a86", MODE:="0666", GROUP="plugdev"
-    # Arduino Uno R4 Minima (通常モード)
-    SUBSYSTEMS=="usb", ATTRS{idVendor}=="2341", ATTRS{idProduct}=="0069", MODE:="0666", GROUP="plugdev"
-    # Arduino Uno R4 Minima (ブートローダーモード)
-    SUBSYSTEMS=="usb", ATTRS{idVendor}=="2341", ATTRS{idProduct}=="006d", MODE:="0666", GROUP="plugdev"
+    
     # CP210x (Silabs) USB-to-UART
     SUBSYSTEMS=="usb", ATTRS{idVendor}=="10c4", MODE:="0666", GROUP="dialout"
     # CH340 (QinHeng) USB-to-UART
     SUBSYSTEMS=="usb", ATTRS{idVendor}=="1a86", MODE:="0666", GROUP="dialout"
     # Espressif USB JTAG/Serial (ESP32-S3 など)
     SUBSYSTEMS=="usb", ATTRS{idVendor}=="303a", MODE:="0666", GROUP="dialout"
+    # Arduino UNO R4 Minima (通常モード & ブートローダーモード)
+    SUBSYSTEMS=="usb", ATTRS{idVendor}=="2341", ATTRS{idProduct}=="0069", MODE="0666", GROUP="dialout"
+    SUBSYSTEMS=="usb", ATTRS{idVendor}=="2341", ATTRS{idProduct}=="0369", MODE="0666", GROUP="dialout"
+
+    # Arduino UNO R4 WiFi (通常モード & ブートローダーモード)
+    SUBSYSTEMS=="usb", ATTRS{idVendor}=="2341", ATTRS{idProduct}=="006a", MODE="0666", GROUP="dialout"
+    SUBSYSTEMS=="usb", ATTRS{idVendor}=="2341", ATTRS{idProduct}=="036a", MODE="0666", GROUP="dialout"
   '';
 
+  # 2. あなたのユーザーアカウントを 'dialout' グループに追加
+  users.users.${username} = { # YOUR_USERNAME は自身のユーザー名に書き換えてください
+    extraGroups = [ "shared" "wheel" "dialout" ];
+  };
   environment.systemPackages = with pkgs; [
     asusctl
   ];

@@ -20,11 +20,6 @@
   programs.ripgrep.enable = true;
   programs.fzf = {
     enable = true;
-    defaultOptions = [
-      "--height=40%"
-      "--layout=reverse"
-      "--border"
-    ];
   };
 
   programs.yazi = {
@@ -112,6 +107,11 @@
     aichat
     tealdeer
     opencode
+    pipx
+    ydotool
     home-manager
+    pulseaudio
+    bc
+    file
   ];
 }

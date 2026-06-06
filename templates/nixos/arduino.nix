@@ -16,6 +16,7 @@
     pkgsCross.avr.buildPackages.avrdude
     dfu-util
     ravedude
+    llvmPackages_18.clang-tools
   ];
 
   # ② plugdev グループを明示的に作成
