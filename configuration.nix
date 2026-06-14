@@ -9,6 +9,7 @@
 }:
 {
   imports = [
+    ./google.nix
     ./steam.nix
     ./niri.nix
     ./hardware-configuration.nix
