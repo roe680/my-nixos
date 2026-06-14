@@ -19,6 +19,20 @@
 
   services.udev.packages = [ pkgs.probe-rs-tools ];
   services.udev.extraRules = ''
+      # Arduino Mega 2560 (本物)
+    SUBSYSTEM=="tty", ATTRS{idVendor}=="2341", ATTRS{idProduct}=="0010", MODE="0666", GROUP="dialout", SYMLINK+="arduino_mega"
+
+    # Arduino Mega 2560 R3
+    SUBSYSTEM=="tty", ATTRS{idVendor}=="2341", ATTRS{idProduct}=="0042", MODE="0666", GROUP="dialout", SYMLINK+="arduino_mega"
+
+    # Arduino Mega 2560 (ブートローダー)
+    SUBSYSTEM=="usb", ATTRS{idVendor}=="2341", ATTRS{idProduct}=="003e", MODE="0666", GROUP="dialout"
+
+    # CH340 チップ搭載クローン（中国製格安品）
+    SUBSYSTEM=="tty", ATTRS{idVendor}=="1a86", ATTRS{idProduct}=="7523", MODE="0666", GROUP="dialout", SYMLINK+="arduino_clone"
+
+    # FTDI チップ搭載クローン
+    SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", MODE="0666", GROUP="dialout"
     # Arduino Uno / Mega 2560 など
     SUBSYSTEMS=="usb", ATTRS{idVendor}=="2341", MODE:="0666", GROUP="plugdev"
     # 一般的なUSBシリアル変換チップ (CH340など)

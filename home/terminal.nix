@@ -40,7 +40,6 @@
       # スクロール設定 (Zellijに任せるため0)
       scrolling.history = 0;
 
-      # シェル設定 (Nushell + Zellij自動起動)
       terminal.shell = {
         program = "zellij";
       };
@@ -81,8 +80,7 @@
     extraConfig = ''
         $env.config.show_banner = false
           # config.nu に自動で追記される設定
-      # Nixの変数を使って ~/.config/nushell/scripts/helix++.nu を絶対パスに変換して読み込む
-      use "${config.home.homeDirectory}/.config/nushell/scripts/helix++.nu" *
+      use "${config.home.homeDirectory}/.config/nushell/scripts/mod.nu" *
     '';
   };
 
