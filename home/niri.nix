@@ -25,6 +25,7 @@
         };
       };
       # Noctalia-shell を起動
+
       spawn-at-startup = [
         { command = [ "noctalia-shell" ]; }
         {
@@ -35,8 +36,27 @@
             "XDG_CURRENT_DESKTOP"
           ];
         }
+        {
+          command = [
+            "rclone"
+            "mount"
+            "roe-google-drive:"
+            "/home/YOUR_USER/gdrive_folder"
+            "--vfs-cache-mode"
+            "writes"
+          ];
+        }
+        {
+          command = [
+            "rclone"
+            "mount"
+            "roe-google-photo:"
+            "/home/YOUR_USER/gphoto_folder"
+            "--vfs-cache-mode"
+            "writes"
+          ];
+        }
       ];
-
       # レイアウト設定 (エラー修正済み)
       layout = {
         gaps = 16;
@@ -76,7 +96,7 @@
       binds = {
         # --- 基本 & アプリ起動 ---
         "Mod+Shift+Slash".action.show-hotkey-overlay = { };
-        "Mod+T".action.spawn = [ "alacritty"];
+        "Mod+T".action.spawn = [ "alacritty" ];
         "Mod+D".action.spawn = [ "walker" ];
         "Mod+Shift+D".action.spawn = [
           "walker"
@@ -200,7 +220,7 @@
         "Alt+Print".action.screenshot-window = { };
         "Mod+Escape".action.toggle-keyboard-shortcuts-inhibit = { };
         "Mod+Shift+P".action.power-off-monitors = { };
-                # --- カラム移動（デフォルト未バインド枠） ---
+        # --- カラム移動（デフォルト未バインド枠） ---
         "Mod+Shift+H".action.move-column-left = { };
         "Mod+Shift+L".action.move-column-right = { };
 
