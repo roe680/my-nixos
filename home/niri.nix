@@ -41,7 +41,7 @@
             "rclone"
             "mount"
             "roe-google-drive:"
-            "/home/YOUR_USER/gdrive_folder"
+            "/home/roe/gdrive_folder"
             "--vfs-cache-mode"
             "writes"
           ];
@@ -51,7 +51,7 @@
             "rclone"
             "mount"
             "roe-google-photo:"
-            "/home/YOUR_USER/gphoto_folder"
+            "/home/roe/gphoto_folder"
             "--vfs-cache-mode"
             "writes"
           ];
