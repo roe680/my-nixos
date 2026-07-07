@@ -36,6 +36,18 @@
   powerManagement.cpuFreqGovernor = "performance";
   services.power-profiles-daemon.enable = true;
 
+  services.ollama = {
+    enable = true;
+    package = pkgs.ollama-vulkan;
+
+    environmentVariables = {
+      OLLAMA_VULKAN = "1";
+      OLLAMA_NUM_PARALLEL = "1";
+      OLLAMA_KEEP_ALIVE = "0";
+      OLLAMA_KV_CACHE_TYPE = "q8_0";
+    };
+  };
+
   # 仮想カメラの動作安定化
   boot.extraModprobeConfig = ''
     options v4l2loopback exclusive_caps=1 card_label="OBS Virtual Camera"
