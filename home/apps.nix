@@ -15,7 +15,8 @@
 
   home.packages = with pkgs; [
     arduino-ide
-
+    github-desktop
+    github-copilot-cli
     obsidian
     freedoom
     gzdoom

@@ -27,7 +27,7 @@
       # Noctalia-shell を起動
 
       spawn-at-startup = [
-        { command = [ "noctalia-shell" ]; }
+        { command = [ "noctalia" ]; }
         {
           command = [
             "dbus-update-activation-environment"
