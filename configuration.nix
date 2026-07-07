@@ -43,6 +43,7 @@
     environmentVariables = {
       OLLAMA_VULKAN = "1";
       OLLAMA_NUM_PARALLEL = "1";
+      OLLAMA_IGPU_ENABLE = "1";
       OLLAMA_KEEP_ALIVE = "0";
       OLLAMA_KV_CACHE_TYPE = "q8_0";
     };
