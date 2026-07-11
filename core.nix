@@ -258,7 +258,6 @@
     libGL
     vulkan-loader
     vulkan-headers
-    vulkan-validation-layers
 
     # ── audio
     alsa-lib

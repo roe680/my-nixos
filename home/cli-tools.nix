@@ -20,6 +20,7 @@
   programs.ripgrep.enable = true;
   programs.fzf = {
     enable = true;
+    historyWidget.nushell.command = "";
   };
 
   programs.yazi = {
