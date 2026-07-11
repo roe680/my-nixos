@@ -36,20 +36,30 @@
   powerManagement.cpuFreqGovernor = "performance";
   services.power-profiles-daemon.enable = true;
 
+  # 【ここが重要】Ollamaの起動タイミングを「システム」ではなく「GPU側」に完全に委ねる
+  systemd.services.ollama = {
+    # デフォルトのシステム起動（multi-user.targetなど）の列からOllamaを外す
+    wantedBy = lib.mkForce [ ];
+
+    # その代わり、「GPU（card0）がシステムに完全に確定した瞬間」にだけ引っ掛けて起動させる
+    bindsTo = [ "dev-dri-card0.device" ];
+    after = [ "dev-dri-card0.device" ];
+  };
+
+  # Udev側から「GPUが確定したらOllamaを呼ぶ」というトリガーを仕込む
   services.ollama = {
     enable = true;
     package = pkgs.ollama-vulkan;
 
     environmentVariables = {
       OLLAMA_VULKAN = "1";
+      OLLAMA_IGPU_ENABLE = "1"; # iGPUの除外を解除(必須)
       OLLAMA_NUM_PARALLEL = "1";
-      OLLAMA_IGPU_ENABLE = "1";
       OLLAMA_KEEP_ALIVE = "0";
       OLLAMA_KV_CACHE_TYPE = "q8_0";
     };
   };
 
-  # 仮想カメラの動作安定化
   boot.extraModprobeConfig = ''
     options v4l2loopback exclusive_caps=1 card_label="OBS Virtual Camera"
   '';
@@ -75,14 +85,16 @@
       '';
     in
     ''
-      # Logitechレシーバー（046d:c53f）が挿さったらタッチパッドOFF
-      ACTION=="add", SUBSYSTEM=="usb", ENV{PRODUCT}=="46d/c53f/*", RUN+="${toggleScript} 1"
 
-      # 抜いたらONに戻す
-      ACTION=="remove", SUBSYSTEM=="usb", ENV{PRODUCT}=="46d/c53f/*", RUN+="${toggleScript} 0"
+      SUBSYSTEM=="drm", KERNEL=="card0", TAG+="systemd", ENV{SYSTEMD_WANTS}+="ollama.service"
+        # Logitechレシーバー（046d:c53f）が挿さったらタッチパッドOFF
+        ACTION=="add", SUBSYSTEM=="usb", ENV{PRODUCT}=="46d/c53f/*", RUN+="${toggleScript} 1"
 
-      # NVMe最適化
-      ACTION=="add|change", KERNEL=="nvme*", ATTR{queue/scheduler}="kyber"
+        # 抜いたらONに戻す
+        ACTION=="remove", SUBSYSTEM=="usb", ENV{PRODUCT}=="46d/c53f/*", RUN+="${toggleScript} 0"
+
+        # NVMe最適化
+        ACTION=="add|change", KERNEL=="nvme*", ATTR{queue/scheduler}="kyber"
     '';
   services.upower.enable = true;
   services.dbus.enable = true;
