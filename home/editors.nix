@@ -144,7 +144,39 @@
         };
       };
     };
+    languages = {
+      language-server.arduino-language-server = {
+        command = "arduino-language-server";
+        args = [
+          "-fqbn"
+          "arduino:avr:uno"
+        ];
+        # arduino-cli / clangd はPATH上から自動検出されるので
+        # -cli や -clangd を明示しなくてもログにあった通り動くはず
+        # ~/.arduino15/arduino-cli.yaml も自動検出済み
+      };
+
+      language = [
+        {
+          name = "ino";
+          scope = "source.ino";
+          file-types = [ "ino" ];
+          grammar = "cpp"; # cppのtree-sitter文法を流用(inoグラマーは存在しないため)
+          language-servers = [ "arduino-language-server" ];
+          comment-token = "//";
+          roots = [ ".ino-root" ];
+          indent = {
+            tab-width = 2;
+            unit = "  ";
+          };
+        }
+      ];
+    };
+
   };
+  home.file.".config/helix/runtime/queries/ino/highlights.scm".text = "; inherits: cpp";
+home.file.".config/helix/runtime/queries/ino/indents.scm".text = "; inherits: cpp";
+home.file.".config/helix/runtime/queries/ino/textobjects.scm".text = "; inherits: cpp";
   programs.neovim = {
     enable = true;
     defaultEditor = false;

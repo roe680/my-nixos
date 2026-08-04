@@ -22,11 +22,11 @@ let
 in
 {
   environment.sessionVariables = {
-      FZF_DEFAULT_OPTS =
-    "--layout=reverse --height=60% --border --info=inline " +
-    "--color 'bg+:#313244,spinner:#f5e0dc,hl:#f38ba8,fg:#cdd6f4,header:#f38ba8,info:#cba6f7,pointer:#f5e0dc,marker:#b4befe,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8,border:#89b4fa' " +
-    "--preview '${fzfPreview} {}'";
-    
+    FZF_DEFAULT_OPTS =
+      "--layout=reverse --height=60% --border --info=inline "
+      + "--color 'bg+:#313244,spinner:#f5e0dc,hl:#f38ba8,fg:#cdd6f4,header:#f38ba8,info:#cba6f7,pointer:#f5e0dc,marker:#b4befe,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8,border:#89b4fa' "
+      + "--preview '${fzfPreview} {}'";
+
     STEAM_FORCE_DESKTOP_WM = "1";
     STEAM_WAYLAND = "1";
     LIBVA_DRIVER_NAME = "iHD"; # Arc は iHD ドライバーを明示指定
@@ -60,8 +60,11 @@ in
       user = "greeter";
     };
   };
-  virtualisation.waydroid.enable = true;
-  networking.firewall.trustedInterfaces = [ "waydroid0"];
+  networking.firewall.trustedInterfaces = [ "waydroid0" ];
+  virtualisation.waydroid = {
+    enable = true;
+    package = pkgs.waydroid-nftables;
+  };
 
   environment.systemPackages = with pkgs; [
     tuigreet

@@ -85,14 +85,15 @@
       '';
     in
     ''
-
       SUBSYSTEM=="drm", KERNEL=="card0", TAG+="systemd", ENV{SYSTEMD_WANTS}+="ollama.service"
         # Logitechレシーバー（046d:c53f）が挿さったらタッチパッドOFF
         ACTION=="add", SUBSYSTEM=="usb", ENV{PRODUCT}=="46d/c53f/*", RUN+="${toggleScript} 1"
-
         # 抜いたらONに戻す
         ACTION=="remove", SUBSYSTEM=="usb", ENV{PRODUCT}=="46d/c53f/*", RUN+="${toggleScript} 0"
-
+        # Elecom M-G01UR（056e:0140）が挿さったらタッチパッドOFF
+        ACTION=="add", SUBSYSTEM=="usb", ENV{PRODUCT}=="56e/140/*", RUN+="${toggleScript} 1"
+        # 抜いたらONに戻す
+        ACTION=="remove", SUBSYSTEM=="usb", ENV{PRODUCT}=="56e/140/*", RUN+="${toggleScript} 0"
         # NVMe最適化
         ACTION=="add|change", KERNEL=="nvme*", ATTR{queue/scheduler}="kyber"
     '';

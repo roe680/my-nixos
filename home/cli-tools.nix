@@ -52,6 +52,7 @@
   };
 
   home.packages = with pkgs; [
+    usbutils
     # ファイル操作
     fastfetch
     lazygit
