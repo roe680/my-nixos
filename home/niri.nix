@@ -5,7 +5,11 @@
   ...
 }:
 
-{
+{# home.nix (home-managerの設定)
+services.udiskie = {
+  enable = true;
+  tray = "auto";
+};
 
   programs.niri = {
     enable = true;

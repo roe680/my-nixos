@@ -73,6 +73,7 @@
       # audio / device
       alsa-lib
       udev
+      
 
       # frequently required
       dbus

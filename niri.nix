@@ -10,6 +10,7 @@
   imports = [ ./wayland-core.nix
      ];
   
+  services.flatpak.enable = true;
 
   environment.systemPackages = with pkgs; [
     xwayland-satellite

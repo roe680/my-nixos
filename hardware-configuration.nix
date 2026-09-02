@@ -11,6 +11,7 @@
 }:
 
 {
+  boot.supportedFilesystems = [ "ntfs" ];
   imports = [
     (modulesPath + "/hardware/cpu/intel-npu.nix")
     (modulesPath + "/installer/scan/not-detected.nix")
@@ -37,7 +38,7 @@
     SUBSYSTEMS=="usb", ATTRS{idVendor}=="2341", MODE:="0666", GROUP="plugdev"
     # 一般的なUSBシリアル変換チップ (CH340など)
     SUBSYSTEMS=="usb", ATTRS{idVendor}=="1a86", MODE:="0666", GROUP="plugdev"
-    
+
     # CP210x (Silabs) USB-to-UART
     SUBSYSTEMS=="usb", ATTRS{idVendor}=="10c4", MODE:="0666", GROUP="dialout"
     # CH340 (QinHeng) USB-to-UART
@@ -54,8 +55,13 @@
   '';
 
   # 2. あなたのユーザーアカウントを 'dialout' グループに追加
-  users.users.${username} = { # YOUR_USERNAME は自身のユーザー名に書き換えてください
-    extraGroups = [ "shared" "wheel" "dialout" ];
+  users.users.${username} = {
+    # YOUR_USERNAME は自身のユーザー名に書き換えてください
+    extraGroups = [
+      "shared"
+      "wheel"
+      "dialout"
+    ];
   };
   environment.systemPackages = with pkgs; [
     asusctl
@@ -75,7 +81,22 @@
     "asus-nb-wmi"
     "asus-wmi"
   ];
-  boot.kernelModules = [ "kvm-intel" ];
+
+  fileSystems."/mnt/windows" = {
+    device = "/dev/disk/by-uuid/967E89EF7E89C907";
+    fsType = "ntfs3";
+    options = [
+      "rw"
+      "uid=1000"
+      "gid=100"
+      "umask=022"
+      "nofail"
+    ];
+  };
+  boot.kernelModules = [
+    "kvm-intel"
+    "cdc_acm"
+  ];
   boot.extraModulePackages = [ ];
 
   fileSystems."/" = {

@@ -2,7 +2,6 @@
   description = "NixOS + Home Manager configuration";
   inputs = {
 
-    zed.url = "github:zed-industries/zed";
     nix-gaming.url = "github:fufexan/nix-gaming";
     niri.url = "github:sodiboo/niri-flake";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";

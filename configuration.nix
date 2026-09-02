@@ -8,6 +8,7 @@
   ...
 }:
 {
+  services.udisks2.enable = true;
   imports = [
     ./google.nix
     ./steam.nix
