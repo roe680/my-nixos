@@ -21,14 +21,7 @@
         rust = pkgs.mkShell {
   packages = (import ./home/rust.nix { inherit pkgs; }).home.packages or [ ];
 
-  nativeBuildInputs = with pkgs; [
-    pkg-config
-  ];
 
-  buildInputs = with pkgs; [
-    fontconfig
-    systemd
-  ];
 
   shellHook = ''
     echo "🦀 [to#rust] Rust環境をロードしました"

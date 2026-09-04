@@ -21,8 +21,6 @@
     cargo-watch
     mold
     clang
-      fontconfig
-  pkg-config
   ];
 
   programs.helix.languages = {

@@ -85,6 +85,8 @@
   # ── pkg-config を通す ─────────────────
   environment.sessionVariables = {
     PKG_CONFIG_PATH = lib.makeSearchPath "lib/pkgconfig" [
+      pkgs.fontconfig.dev
+      pkgs.systemd.dev
       pkgs.wayland.dev
       pkgs.libxkbcommon.dev
       pkgs.alsa-lib.dev
