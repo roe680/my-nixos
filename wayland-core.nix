@@ -53,13 +53,6 @@ in
     XMODIFIERS = "@im=fcitx";
   };
 
-  services.greetd = {
-    enable = true;
-    settings.default_session = {
-      command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd niri-session";
-      user = "greeter";
-    };
-  };
   networking.firewall.trustedInterfaces = [ "waydroid0" ];
   virtualisation.waydroid = {
     enable = true;
@@ -67,6 +60,7 @@ in
   };
 
   environment.systemPackages = with pkgs; [
+    xorg.xhost
     tuigreet
     wayland-utils
     wlr-randr

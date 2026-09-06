@@ -7,12 +7,57 @@
 }:
 
 {
+programs.ghostty = {
+  enable = true;
+
+  # systemd ユーザーサービス
+  systemd.enable = true;
+
+  settings = {
+  font-feature = "calt";
+    # 環境変数
+    term = "xterm-ghostty";
+
+    # ウィンドウ設定
+    background-opacity = 0.95;
+    window-decoration = "none";
+
+    # フォント設定
+    font-family = "UDEV Gothic 35NFLG";
+    font-style = "Medium";
+    font-size = 10.5;
+
+    # カーソル設定
+    cursor-style = "bar";
+    cursor-style-blink = true;
+
+    # スクロールバック
+    scrollback-limit = 0;
+
+    # Zellijを起動
+    command = "zellij";
+
+    # キーバインド
+keybind = "ctrl+semicolon=increase_font_size:1";
+    # カラー
+    background = "000109";
+
+    # シングルインスタンス
+    gtk-single-instance = true;
+
+    # 最後のウィンドウを閉じてもプロセスを終了しない
+    quit-after-last-window-closed = false;
+    confirm-close-surface = false;
+  };
+};
+  
+  
   programs.alacritty = {
     enable = true;
     settings = {
       # 環境変数
 
-      env.TERM = "alacritty";
+      env.TERM = "xterm-ghostty";
 
       # ウィンドウ設定
       window = {
@@ -22,7 +67,7 @@
 
       # フォント設定
       font = {
-        size = 12.0;
+        size = 10.5;
         normal = {
           family = "UDEV Gothic 35NF"; # Hack Nerd Fontからこちらに統合
           style = "Medium";
@@ -60,20 +105,6 @@
     };
   };
 
-  programs.ghostty = {
-    enable = true;
-    # デーモン（systemd ユーザーサービス）を有効化
-    systemd.enable = true;
-
-    settings = {
-      # デーモンとして常駐させるための推奨設定
-      gtk-single-instance = true;
-      cursor-style = "bar";
-
-      # 最後のウィンドウを閉じてもデーモンを維持する場合（任意）
-      quit-after-last-window-closed = false;
-    };
-  };
 
   programs.nushell = {
     enable = true;

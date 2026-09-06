@@ -315,7 +315,7 @@
       };
     };
 
-    # 元の nix 式からそのまま
+    # 元の nix 式からそのまま(キーバインドに完全対応させたステータスバー表示に更新)
     layouts = {
       default = ''
         layout {
@@ -340,23 +340,48 @@
                     plugin location="file:${
                       inputs.zjstatus.packages.${pkgs.system}.default
                     }/bin/zjstatus.wasm" {
+                        // 左側: 現在のモード固有のキー
                         format_left  "{mode}"
-                        format_right "{command_kubectx}#[fg=#424554,bg=#181825]::{command_kubens}{datetime}"
+                        // 右側: 全モード共通(lockedを除く)のAlt系グローバルキー + kubectx/kubens/日時
+                        format_right "#[bg=#181825,fg=#424554] A-f:float A-n:new A-hjkl:focus A-io:move-tab A-+/-:resize A-[/]:swap-layout A-p:group A-P:mark ^g:lock ^q:quit  {command_kubectx}#[fg=#424554,bg=#181825]::{command_kubens}{datetime}"
                         format_space "#[bg=#181825]"
-                        mode_normal      "#[bg=#89B4FA,fg=#181825,bold] NORMAL #[bg=#181825,fg=#6C7086] ^p:pane ^t:tab ^n:resize ^s:scroll ^o:session ^b:tmux "
-                        mode_locked      "#[bg=#FF5555,fg=#181825,bold] LOCKED #[bg=#181825,fg=#6C7086] ^g:unlock "
-                        mode_resize      "#[bg=#89B4FA,fg=#181825,bold] RESIZE #[bg=#181825,fg=#89B4FA] hjkl:+ HJKL:- =/+:↑ -:↓ "
-                        mode_pane        "#[bg=#89B4FA,fg=#181825,bold] PANE   #[bg=#181825,fg=#89B4FA] hjkl:focus n:new d:↓ r:→ x:close f:full w:float e:embed c:rename "
-                        mode_tab         "#[bg=#89B4FA,fg=#181825,bold] TAB    #[bg=#181825,fg=#89B4FA] h/l:prev/next n:new x:close r:rename 1-9:goto s:sync "
-                        mode_scroll      "#[bg=#89B4FA,fg=#181825,bold] SCROLL #[bg=#181825,fg=#89B4FA] jk:scroll ^f/^b:page d/u:half s:search e:edit "
+
+                        // normal: shared_except "locked" の Ctrl+p/t/n/s/o/h/b に対応(全モード直接切替)
+                        mode_normal "#[bg=#89B4FA,fg=#181825,bold] NORMAL #[bg=#181825,fg=#6C7086] ^p:pane ^t:tab ^n:resize ^s:scroll ^o:session ^h:move ^b:tmux "
+
+                        // locked: Ctrl+g で解除。Alt系グローバルキーもここでは無効
+                        mode_locked "#[bg=#FF5555,fg=#181825,bold] LOCKED #[bg=#181825,fg=#6C7086] ^g:unlock "
+
+                        // resize: hjkl/HJKL 方向リサイズ、=/+ と - は全体増減、Ctrl+n で戻る
+                        mode_resize "#[bg=#89B4FA,fg=#181825,bold] RESIZE #[bg=#181825,fg=#89B4FA] hjkl:grow HJKL:shrink =/+:incr -:decr ^n:normal "
+
+                        // pane: s(stack)・i(pin)・p(switch focus)を追加、Ctrl+p で戻る
+                        mode_pane "#[bg=#89B4FA,fg=#181825,bold] PANE #[bg=#181825,fg=#89B4FA] hjkl:focus p:switch n:new d:↓ r:→ s:stack x:close f:full w:float e:embed c:rename i:pin ^p:normal "
+
+                        // tab: b(break)・[ ](break left/right)・Tab(toggle)を追加、Ctrl+t で戻る
+                        mode_tab "#[bg=#89B4FA,fg=#181825,bold] TAB #[bg=#181825,fg=#89B4FA] h/l:prev/next n:new x:close r:rename 1-9:goto s:sync b:break []:break-l/r Tab:toggle ^t:normal "
+
+                        // scroll: Ctrl+s で戻る
+                        mode_scroll "#[bg=#89B4FA,fg=#181825,bold] SCROLL #[bg=#181825,fg=#89B4FA] jk:scroll ^f/^b:page d/u:half s:search e:edit ^s:normal "
+
                         mode_enter_search "#[bg=#89B4FA,fg=#181825,bold] SEARCH #[bg=#181825,fg=#89B4FA] Enter:search Esc:cancel "
-                        mode_search      "#[bg=#89B4FA,fg=#181825,bold] SEARCH #[bg=#181825,fg=#89B4FA] n:↓ p:↑ c:case w:wrap o:word "
-                        mode_rename_tab  "#[bg=#89B4FA,fg=#181825,bold] RENAME TAB  #[bg=#181825,fg=#89B4FA] Enter:confirm Esc:cancel "
-                        mode_rename_pane "#[bg=#89B4FA,fg=#181825,bold] RENAME PANE #[bg=#181825,fg=#89B4FA] Enter:confirm Esc:cancel "
-                        mode_session     "#[bg=#89B4FA,fg=#181825,bold] SESSION #[bg=#181825,fg=#89B4FA] d:detach w:manager c:config p:plugins "
-                        mode_move        "#[bg=#89B4FA,fg=#181825,bold] MOVE   #[bg=#181825,fg=#89B4FA] hjkl:move n/Tab:next p:prev "
-                        mode_prompt      "#[bg=#89B4FA,fg=#181825,bold] PROMPT #[bg=#181825,fg=#89B4FA] "
-                        mode_tmux        "#[bg=#ffc387,fg=#181825,bold] TMUX   #[bg=#181825,fg=#89B4FA] c:new-tab p/n:tab \"/%%:split z:full ,:rename hjkl:focus x:close d:detach "
+                        mode_search       "#[bg=#89B4FA,fg=#181825,bold] SEARCH #[bg=#181825,fg=#89B4FA] n:↓ p:↑ c:case w:wrap o:word "
+
+                        // renametab/renamepane: Esc は undo(元に戻す)、Ctrl+c でキャンセル終了
+                        mode_rename_tab  "#[bg=#89B4FA,fg=#181825,bold] RENAME TAB #[bg=#181825,fg=#89B4FA] Enter:confirm Esc:undo ^c:cancel "
+                        mode_rename_pane "#[bg=#89B4FA,fg=#181825,bold] RENAME PANE #[bg=#181825,fg=#89B4FA] Enter:confirm Esc:undo ^c:cancel "
+
+                        // session: a(about)・s(share)・l(layout-manager)を追加、Ctrl+o で戻る
+                        mode_session "#[bg=#89B4FA,fg=#181825,bold] SESSION #[bg=#181825,fg=#89B4FA] d:detach w:manager c:config p:plugins a:about s:share l:layout ^o:normal "
+
+                        // move: Ctrl+h で戻る
+                        mode_move "#[bg=#89B4FA,fg=#181825,bold] MOVE #[bg=#181825,fg=#89B4FA] hjkl:move n/Tab:next p:prev ^h:normal "
+
+                        mode_prompt "#[bg=#89B4FA,fg=#181825,bold] PROMPT #[bg=#181825,fg=#89B4FA] "
+
+                        // tmux: o(次のペイン)・space(レイアウト切替)・[(scrollへ)を追加、Ctrl+b で戻る
+                        mode_tmux "#[bg=#ffc387,fg=#181825,bold] TMUX #[bg=#181825,fg=#89B4FA] c:new-tab \"/%%:split z:full ,:rename hjkl:focus o:next space:swap [:scroll x:close d:detach ^b:normal "
+
                         mode_default_to_mode "tmux"
                         command_kubectx_command  "kubectx -c"
                         command_kubectx_format   "#[fg=#6C7086,bg=#181825,italic] {stdout}"

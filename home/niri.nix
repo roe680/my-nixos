@@ -5,11 +5,12 @@
   ...
 }:
 
-{# home.nix (home-managerの設定)
-services.udiskie = {
-  enable = true;
-  tray = "auto";
-};
+{
+  # home.nix (home-managerの設定)
+  services.udiskie = {
+    enable = true;
+    tray = "auto";
+  };
 
   programs.niri = {
     enable = true;
@@ -29,8 +30,18 @@ services.udiskie = {
         };
       };
       # Noctalia-shell を起動
-
       spawn-at-startup = [
+        {
+          command = [
+            "${pkgs.kdePackages.polkit-kde-agent-1}/libexec/polkit-kde-authentication-agent-1"
+          ];
+        }
+        {
+          command = [
+            "xhost"
+            "+SI:localuser:root"
+          ];
+        }
         { command = [ "noctalia" ]; }
         {
           command = [
@@ -38,6 +49,26 @@ services.udiskie = {
             "--systemd"
             "WAYLAND_DISPLAY"
             "XDG_CURRENT_DESKTOP"
+          ];
+        }
+        {
+          command = [
+            "rclone"
+            "mount"
+            "icloud:"
+            "/home/roe/icloud_photo"
+            "--vfs-cache-mode"
+            "writes"
+          ];
+        }
+        {
+          command = [
+            "rclone"
+            "mount"
+            "66:"
+            "/home/roe/icloud_drive"
+            "--vfs-cache-mode"
+            "writes"
           ];
         }
         {
@@ -100,14 +131,17 @@ services.udiskie = {
       binds = {
         # --- 基本 & アプリ起動 ---
         "Mod+Shift+Slash".action.show-hotkey-overlay = { };
-        "Mod+T".action.spawn = [ "alacritty" ];
-        "Mod+D".action.spawn = [ "walker" ];
-        "Mod+Shift+D".action.spawn = [
-          "walker"
-          "--modules"
-          "dmenu"
+        "Mod+T".action.spawn = [
+          "ghostty"
+          "+new-window"
         ];
         "Super+Alt+L".action.spawn = [ "swaylock" ];
+        "Mod+D".action.spawn = [
+          "noctalia"
+          "msg"
+          "panel-toggle"
+          "launcher"
+        ];
         "Mod+Q".action.close-window = { };
         "Mod+Shift+E".action.quit = { };
 

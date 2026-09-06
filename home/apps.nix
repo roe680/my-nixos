@@ -24,6 +24,7 @@
 
 
   home.packages = with pkgs; [
+    ventoy-full-gtk
     loupe
     imv
     losslesscut

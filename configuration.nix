@@ -8,6 +8,10 @@
   ...
 }:
 {
+  security.polkit = {
+  enable = true;
+  enablePkexecWrapper = true;
+};
   services.udisks2.enable = true;
   imports = [
     ./google.nix
@@ -20,7 +24,19 @@
     ./bluetooth.nix
     ./docker.nix
     ./secrets.nix
+    inputs.noctalia-greeter.nixosModules.default
+
   ];
+  programs.noctalia-greeter = {
+  enable = true;
+
+  greeter-args = "--session niri";
+};
+programs.noctalia-greeter.settings = {
+  keyboard = {
+    layout = "jp";
+  };
+};
   fileSystems."/mnt/usb" = {
     device = "/dev/sda1";
     fsType = "exfat";
@@ -34,6 +50,12 @@
     enable = true;
     scheduler = "scx_bpfland"; # Rust製低遅延スケジューラ
   };
+  nixpkgs.config.permittedInsecurePackages = [
+   "ventoy-gtk3-1.1.17"
+];
+services.displayManager.sessionPackages = [
+  pkgs.niri
+];
   powerManagement.cpuFreqGovernor = "performance";
   services.power-profiles-daemon.enable = true;
 
@@ -115,6 +137,7 @@
     ];
     shell = pkgs.nushell;
   };
+  environment.shells = [ pkgs.nushell ];
   environment.pathsToLink = [
     "/share/applications"
     "/share/xdg-desktop-portal"
