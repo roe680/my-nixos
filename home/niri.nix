@@ -92,6 +92,22 @@
           ];
         }
       ];
+       # ウィンドウルールの定義
+    # window-rules = [
+    #   {
+    #     # Ghostty の app-id にマッチさせる
+    #     matches = [
+    #       { app-id = "com.mitchellh.ghostty"; }
+    #     ];
+
+    #     # 背景エフェクトの設定
+    #     background-effect = {
+    #       blur = true;
+    #       noise = 0.02;
+    #       saturation = 1.2;
+    #     };
+    #   }
+    # ];
       # レイアウト設定 (エラー修正済み)
       layout = {
         gaps = 16;

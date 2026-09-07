@@ -19,7 +19,6 @@ programs.ghostty = {
     term = "xterm-ghostty";
 
     # ウィンドウ設定
-    background-opacity = 0.95;
     window-decoration = "none";
 
     # フォント設定
