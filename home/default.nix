@@ -2,6 +2,7 @@
 
 {
   imports = [
+    ./neovim.nix
     ./zellij.nix
     ./walker.nix
     ./terminal.nix

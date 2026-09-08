@@ -177,20 +177,6 @@
   home.file.".config/helix/runtime/queries/ino/highlights.scm".text = "; inherits: cpp";
 home.file.".config/helix/runtime/queries/ino/indents.scm".text = "; inherits: cpp";
 home.file.".config/helix/runtime/queries/ino/textobjects.scm".text = "; inherits: cpp";
-  programs.neovim = {
-    enable = true;
-    defaultEditor = false;
-    vimAlias = true;
-    withRuby = true;
-    withPython3 = true;
-    extraPackages = with pkgs; [
-      lazygit
-      ripgrep
-      fd
-      gcc
-      nodejs
-    ];
-  };
 
   home.packages = with pkgs; [
     # LSP
