@@ -24,6 +24,7 @@
 
 
   home.packages = with pkgs; [
+  	neovide
     ventoy-full-gtk
     loupe
     imv
