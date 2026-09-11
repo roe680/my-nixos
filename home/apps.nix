@@ -24,6 +24,8 @@
 
 
   home.packages = with pkgs; [
+    kicad
+    music-discord-rpc
   	neovide
     ventoy-full-gtk
     loupe

@@ -1,9 +1,17 @@
-{ pkgs ? import <nixpkgs> {}, username ? "roe", ... }: # ← 末尾に `...` を追加して未知の引数を許容
+{ pkgs ? import <nixpkgs> {}, username ? "roe", ... }:
 let
   # arduino-language-server の stderr から非 UTF-8 バイトを除去するラッパー
   arduinoLspWrapped = pkgs.writeShellScriptBin "arduino-language-server-wrapped" ''
     #!${pkgs.bash}/bin/bash
     exec ${pkgs.arduino-language-server}/bin/arduino-language-server "$@" 2> >(${pkgs.glibc}/bin/iconv -c -f UTF-8 -t UTF-8 >&2)
+  '';
+
+  # workspace/semanticTokens/refresh 等を clangd 側で横取りして
+  # arduino-language-server に panic を起こさせないためのプロキシ。
+  # ./clangd-refresh-guard.py を同じディレクトリに置いておくこと。
+  clangdRefreshGuard = pkgs.writeShellScriptBin "clangd-refresh-guard" ''
+    export CLANGD_REAL=${pkgs.llvmPackages_18.clang-tools}/bin/clangd
+    exec ${pkgs.python3}/bin/python3 ${./clangd-refresh-guard.py} "$@"
   '';
 
   helixLanguagesToml = pkgs.writeText "arduino-languages.toml" ''
@@ -24,7 +32,7 @@ let
     command = "${arduinoLspWrapped}/bin/arduino-language-server-wrapped"
     args = [
       "-cli", "${pkgs.arduino-cli}/bin/arduino-cli",
-      "-clangd", "${pkgs.llvmPackages_18.clang-tools}/bin/clangd",
+      "-clangd", "${clangdRefreshGuard}/bin/clangd-refresh-guard",
       "-fqbn", "arduino:avr:uno"
     ]
   '';
@@ -48,6 +56,8 @@ in
     ravedude
     llvmPackages_18.clang-tools
     arduinoLspWrapped
+    clangdRefreshGuard
+    python3
   ];
 
   users.groups.plugdev = { };

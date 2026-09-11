@@ -88,7 +88,6 @@ services.displayManager.sessionPackages = [
   '';
   # 1. カーネルパラメータで休止状態からの復旧を明示的にスキップ
   boot.kernelParams = [
-    "noresume"
     "nvme_core.default_ps_max_latency_us=0" # NVMe APST無効化
     "pcie_aspm=off"
     "i915.force_probe=!7d51"

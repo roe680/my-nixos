@@ -19,15 +19,13 @@
     {
       devShells.${system} = {
         rust = pkgs.mkShell {
-  packages = (import ./home/rust.nix { inherit pkgs; }).home.packages or [ ];
+          packages = (import ./home/rust.nix { inherit pkgs; }).home.packages or [ ];
 
+          shellHook = ''
+            echo "🦀 [to#rust] Rust環境をロードしました"
+          '';
+        };
 
-
-  shellHook = ''
-    echo "🦀 [to#rust] Rust環境をロードしました"
-  '';
-};
-        
         # 🎮 Bevyゲーム開発 ＆ Rust環境
         bevy = pkgs.mkShell {
           packages =
@@ -41,28 +39,31 @@
             ++ ((import ./nixos/arduino.nix { inherit pkgs username; }).environment.systemPackages or [ ])
             ++ ((import ./nixos/esp.nix { inherit pkgs lib username; }).environment.systemPackages or [ ]);
           shellHook = ''
-                        echo "🔌 [to#arduino-esp] ESP/Arduino 組み込みRust環境をロードしました"
-                        
+              echo "🔌 [to#arduino-esp] ESP/Arduino 組み込みRust環境をロードしました"
 
-                        HELIX_TOML="${
-                          (import ./nixos/arduino.nix { inherit pkgs username; }).helix.languagesToml
-                        }"
+              HELIX_TOML="${(import ./nixos/arduino.nix { inherit pkgs username; }).helix.languagesToml}"
 
-                        if ls *.ino >/dev/null 2>&1; then
-                          mkdir -p .helix
-                          if [ ! -e .helix/languages.toml ]; then
-                            cp "$HELIX_TOML" .helix/languages.toml
-                            chmod +w .helix/languages.toml
-                            echo "  → .helix/languages.toml を生成しました"
-                          fi
-                          if [ ! -e .ino-root ]; then
-                            touch .ino-root
-                            echo "  → .ino-root を生成しました"
-                          fi
+              if ls *.ino >/dev/null 2>&1; then
+                mkdir -p .helix
 
-                          # clangd 向けにホストヘッダー遮断設定を自動生成
-                          if [ ! -e .clangd ]; then
-                            cat << 'EOF' > .clangd
+                if [ ! -e .helix/languages.toml ]; then
+                  cp "$HELIX_TOML" .helix/languages.toml
+                  chmod +w .helix/languages.toml
+                  echo "  → .helix/languages.toml を生成しました"
+                fi
+
+                if [ ! -e .ino-root ]; then
+                  touch .ino-root
+                  echo "  → .ino-root を生成しました"
+                fi
+
+                if [ ! -e sketch.yaml ]; then
+                  printf '%s\n' 'default_fqbn: arduino:avr:mega' > sketch.yaml
+                  echo "  → sketch.yaml を生成しました"
+                fi
+
+                if [ ! -e .clangd ]; then
+                  cat > .clangd <<'EOF'
             CompileFlags:
               Add:
                 - "-nostdinc"
@@ -70,11 +71,11 @@
                 - "-U__x86_64__"
                 - "-D__AVR__"
             EOF
-                            echo "  → .clangd を生成しました"
-                          fi
-                        else
-                          echo "  ⚠️  .inoファイルが見つからないため、環境設定ファイルは生成しませんでした"
-                        fi
+                  echo "  → .clangd を生成しました"
+                fi
+              else
+                echo "  ⚠️  .inoファイルが見つからないため、環境設定ファイルは生成しませんでした"
+              fi
           '';
         };
         # ⚡ Zig環境
