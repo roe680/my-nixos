@@ -67,111 +67,125 @@
             ++ esp.environment.systemPackages;
 
           shellHook = ''
-                        echo "🔌 [to#arduino-esp] ESP/Arduino 組み込みRust環境をロードしました"
+            echo "🔌 [to#arduino-esp] ESP/Arduino 組み込みRust環境をロードしました"
 
-                        HELIX_TOML="${arduino.helix.languagesToml}"
+            HELIX_TOML="${arduino.helix.languagesToml}"
 
-                        # ------------------------------------------------------------
-                        # Arduino プロジェクト判定
-                        # ------------------------------------------------------------
+            # ------------------------------------------------------------
+            # Arduino プロジェクト判定
+            # ------------------------------------------------------------
 
-                        if ls *.ino >/dev/null 2>&1; then
+            if ls *.ino >/dev/null 2>&1; then
 
-                          echo "  → Arduinoプロジェクトを検出しました"
+              echo "  → Arduinoプロジェクトを検出しました"
 
+              # ----------------------------------------------------------
+              # Helix
+              # ----------------------------------------------------------
 
-                          # ----------------------------------------------------------
-                          # Helix
-                          # ----------------------------------------------------------
+              mkdir -p .helix
 
-                          mkdir -p .helix
+              if [ ! -e .helix/languages.toml ]; then
+                cp "$HELIX_TOML" .helix/languages.toml
+                chmod +w .helix/languages.toml
 
-                          if [ ! -e .helix/languages.toml ]; then
-                            cp "$HELIX_TOML" .helix/languages.toml
-                            chmod +w .helix/languages.toml
+                echo "  → .helix/languages.toml を生成しました"
+              fi
 
-                            echo "  → .helix/languages.toml を生成しました"
-                          fi
+              # ----------------------------------------------------------
+              # Arduino Language Server の root
+              # ----------------------------------------------------------
 
+              if [ ! -e .ino-root ]; then
+                touch .ino-root
 
-                          # ----------------------------------------------------------
-                          # Arduino Language Server の root
-                          # ----------------------------------------------------------
+                echo "  → .ino-root を生成しました"
+              fi
 
-                          if [ ! -e .ino-root ]; then
-                            touch .ino-root
+              # ----------------------------------------------------------
+              # sketch.yaml
+              # ----------------------------------------------------------
 
-                            echo "  → .ino-root を生成しました"
-                          fi
+              if [ ! -e sketch.yaml ]; then
 
+                printf '%s\n' \
+                  'default_fqbn: arduino:avr:mega' \
+                  > sketch.yaml
 
-                          # ----------------------------------------------------------
-                          # sketch.yaml
-                          # ----------------------------------------------------------
+                echo "  → sketch.yaml を生成しました"
+              fi
 
-                          if [ ! -e sketch.yaml ]; then
+              # ----------------------------------------------------------
+              # .clangd
+              # ----------------------------------------------------------
 
-                            printf '%s\n' \
-                              'default_fqbn: arduino:avr:mega' \
-                              > sketch.yaml
+              if [ ! -e .clangd ]; then
 
-                            echo "  → sketch.yaml を生成しました"
-                          fi
+                cat > .clangd <<'EOF'
+CompileFlags:
+  Add:
+    - "-nostdinc"
+    - "-U__i386__"
+    - "-U__x86_64__"
+    - "-D__AVR__"
+EOF
 
+                echo "  → .clangd を生成しました"
 
-                          # ----------------------------------------------------------
-                          # .clangd
-                          # ----------------------------------------------------------
+              fi
 
-                          if [ ! -e .clangd ]; then
+              # ----------------------------------------------------------
+              # Zed
+              # ----------------------------------------------------------
 
-                            cat > .clangd <<'EOF'
-            CompileFlags:
-              Add:
-                - "-nostdinc"
-                - "-U__i386__"
-                - "-U__x86_64__"
-                - "-D__AVR__"
-            EOF
+              mkdir -p .zed
 
-                            echo "  → .clangd を生成しました"
-                          fi
+              if [ ! -e .zed/settings.json ]; then
 
+                cat > .zed/settings.json <<EOF
+{
+  "file_types": {
+    "Arduino": [
+      "ino",
+      "cpp",
+      "cc",
+      "h",
+      "hpp"
+    ]
+  },
 
-                          # ----------------------------------------------------------
-                          # Zed
-                          # ----------------------------------------------------------
+  "languages": {
+    "Arduino": {
+      "language_servers": [
+        "arduino-language-server"
+      ]
+    }
+  },
 
-                          mkdir -p .zed
+  "lsp": {
+    "arduino-language-server": {
+      "binary": {
+        "path": "${arduino.arduinoLspSerialize}/bin/arduino-language-server-serialize",
+        "arguments": [
+          "-cli",
+          "${pkgs.arduino-cli}/bin/arduino-cli",
+          "-clangd",
+          "${arduino.clangdRefreshGuard}/bin/clangd-refresh-guard"
+        ]
+      }
+    }
+  }
+}
+EOF
 
-                          if [ ! -e .zed/settings.json ]; then
+                echo "  → .zed/settings.json を生成しました"
+              fi
 
-                            cat > .zed/settings.json <<EOF
-            {
-              ...
-              "lsp": {
-                "arduino-language-server": {
-                  "binary": {
-                    "path": "${arduino.arduinoLspFullSync}/bin/arduino-language-server-fullsync",
-                    "arguments": [
-                      "-cli",
-                      "${pkgs.arduino-cli}/bin/arduino-cli",
-                      "-clangd",
-                      "${arduino.clangdRefreshGuard}/bin/clangd-refresh-guard"
-                    ]
-                  }
-                }
-              }
-            }
-            EOF
-                            echo "  → .zed/settings.json を生成しました"
-                          fi
+            else
 
-                        else
+              echo "  ⚠  .inoファイルが見つからないため、Arduinoプロジェクト設定を生成しませんでした"
 
-                          echo "  ⚠  .inoファイルが見つからないため、Arduinoプロジェクト設定を生成しませんでした"
-
-                        fi
+            fi
           '';
         };
 
