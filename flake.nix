@@ -6,6 +6,10 @@
     niri.url = "github:sodiboo/niri-flake";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nix-hazkey = {
+      url = "github:aster-void/nix-hazkey";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
     noctalia-greeter = {
       url = "github:noctalia-dev/noctalia-greeter";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
@@ -99,6 +103,7 @@
             home-manager.users.${username} = import ./home;
           }
           agenix.nixosModules.default
+          inputs.nix-hazkey.nixosModules.hazkey
         ];
       };
     };
