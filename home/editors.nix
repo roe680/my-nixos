@@ -94,6 +94,9 @@
           space = {
             q = ":quit";
             o = "file_picker_in_current_buffer_directory";
+            f = ":format";
+            w = ":write";
+            b = "buffer_picker";
           };
 
           # バッファ操作
