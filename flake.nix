@@ -72,6 +72,7 @@
       ];
     in
     {
+
       nixosConfigurations.${hostname} = nixpkgs-unstable.lib.nixosSystem {
         inherit system;
         specialArgs = {

@@ -1,9 +1,29 @@
 { pkgs ? import <nixpkgs> {}, username ? "roe", ... }:
 let
+  arduino-language-server-rc = pkgs.stdenv.mkDerivation {
+    pname = "arduino-language-server";
+    version = "0.8.0-rc.1";
+
+    src = pkgs.fetchurl {
+      url = "https://github.com/arduino/arduino-language-server/releases/download/0.8.0-rc.1/arduino-language-server_0.8.0-rc.1_Linux_64bit.tar.gz";
+      hash = "sha256-b4AnvfxC/Uj8gKJ0zaLMUgJSfe6Iwxt3UHiO9d6G3bs="; # ← 実際のSRI hash
+    };
+
+    sourceRoot = ".";
+
+    installPhase = ''
+      install -Dm755 arduino-language-server_linux_amd64/arduino-language-server \
+        $out/bin/arduino-language-server
+    '';
+  };
+
+  # nixpkgs に入っている copilot-language-server をそのまま利用
+  copilotLsp = pkgs.copilot-language-server;
+
   # arduino-language-server の stderr から非 UTF-8 バイトを除去するラッパー
   arduinoLspWrapped = pkgs.writeShellScriptBin "arduino-language-server-wrapped" ''
     #!${pkgs.bash}/bin/bash
-    exec ${pkgs.arduino-language-server}/bin/arduino-language-server "$@" 2> >(${pkgs.glibc.bin}/bin/iconv -c -f UTF-8 -t UTF-8 >&2)
+    exec ${arduino-language-server-rc}/bin/arduino-language-server "$@" 2> >(${pkgs.glibc.bin}/bin/iconv -c -f UTF-8 -t UTF-8 >&2)
   '';
 
   # workspace/semanticTokens/refresh 等を clangd 側で横取りして
@@ -59,12 +79,40 @@ let
       "-cli", "${pkgs.arduino-cli}/bin/arduino-cli",
       "-clangd", "${clangdRefreshGuard}/bin/clangd-refresh-guard",
     ]
+
+    # --- GitHub Copilot LSP ---
+    [language-server.copilot]
+    command = "${copilotLsp}/bin/copilot-language-server"
+    args = ["--stdio"]
+
+    [language-server.copilot.config]
+    editor.name = "helix"
+    editor.version = "24.0"
+    editorPlugin.name = "helix-copilot"
+    editorPlugin.version = "0.1.0"
+
+    # --- 既定の language-servers を維持しつつ copilot を追加 ---
+    [[language]]
+    name = "zig"
+    language-servers = ["zls", "copilot"]
+
+    [[language]]
+    name = "c"
+    language-servers = ["clangd", "copilot"]
+
+    [[language]]
+    name = "cpp"
+    language-servers = ["clangd", "copilot"]
+
+    [[language]]
+    name = "rust"
+    language-servers = ["rust-analyzer", "copilot"]
   '';
 in
 {
   environment.systemPackages = with pkgs; [
     bossa-arduino
-    arduino-language-server
+    arduino-language-server-rc
     arduino-cli
     arduino
     probe-rs-tools
@@ -83,6 +131,7 @@ in
     clangdRefreshGuard
     arduinoLspSerialize
     python3
+    zls
   ];
 
   users.groups.plugdev = { };
@@ -98,4 +147,5 @@ in
   arduinoLspWrapped = arduinoLspWrapped;
   clangdRefreshGuard = clangdRefreshGuard;
   arduinoLspSerialize = arduinoLspSerialize;
+  copilotLsp = copilotLsp;
 }

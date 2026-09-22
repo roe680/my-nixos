@@ -32,6 +32,9 @@
 
   greeter-args = "--session niri";
 };
+nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (pkgs.lib.getName pkg) [
+  "copilot-language-server"
+];
 programs.noctalia-greeter.settings = {
   keyboard = {
     layout = "jp";

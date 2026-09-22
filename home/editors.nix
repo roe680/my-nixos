@@ -144,16 +144,31 @@
         };
       };
     };
+
     languages = {
-      language-server.arduino-language-server = {
-        command = "arduino-language-server";
-        args = [
-          "-fqbn"
-          "arduino:avr:uno"
-        ];
-        # arduino-cli / clangd はPATH上から自動検出されるので
-        # -cli や -clangd を明示しなくてもログにあった通り動くはず
-        # ~/.arduino15/arduino-cli.yaml も自動検出済み
+      language-server = {
+        arduino-language-server = {
+          command = "arduino-language-server";
+          args = [
+            "-fqbn"
+            "arduino:avr:uno"
+          ];
+          # arduino-cli / clangd はPATH上から自動検出されるので
+          # -cli や -clangd を明示しなくてもログにあった通り動くはず
+          # ~/.arduino15/arduino-cli.yaml も自動検出済み
+        };
+
+        # --- GitHub Copilot LSP（バイナリは既に別モジュールでインストール済み） ---
+        copilot = {
+          command = "copilot-language-server";
+          args = [ "--stdio" ];
+          config = {
+            editor.name = "helix";
+            editor.version = "24.0";
+            editorPlugin.name = "helix-copilot";
+            editorPlugin.version = "0.1.0";
+          };
+        };
       };
 
       language = [
@@ -170,13 +185,32 @@
             unit = "  ";
           };
         }
+
+        # --- 既定の language-servers を維持しつつ copilot を追加 ---
+        {
+          name = "zig";
+          language-servers = [ "zls" "copilot" ];
+        }
+        {
+          name = "c";
+          language-servers = [ "clangd" "copilot" ];
+        }
+        {
+          name = "cpp";
+          language-servers = [ "clangd" "copilot" ];
+        }
+        {
+          name = "rust";
+          language-servers = [ "rust-analyzer" "copilot" ];
+        }
       ];
     };
 
   };
+
   home.file.".config/helix/runtime/queries/ino/highlights.scm".text = "; inherits: cpp";
-home.file.".config/helix/runtime/queries/ino/indents.scm".text = "; inherits: cpp";
-home.file.".config/helix/runtime/queries/ino/textobjects.scm".text = "; inherits: cpp";
+  home.file.".config/helix/runtime/queries/ino/indents.scm".text = "; inherits: cpp";
+  home.file.".config/helix/runtime/queries/ino/textobjects.scm".text = "; inherits: cpp";
 
   home.packages = with pkgs; [
     # LSP

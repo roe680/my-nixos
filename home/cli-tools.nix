@@ -52,6 +52,7 @@
   };
 
   home.packages = with pkgs; [
+    copilot-language-server
     usbutils
     # ファイル操作
     fastfetch
