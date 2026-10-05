@@ -24,6 +24,7 @@
 
 
   home.packages = with pkgs; [
+    gimp
     kicad
     music-discord-rpc
   	neovide

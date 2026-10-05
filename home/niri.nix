@@ -22,6 +22,8 @@
         touchpad = {
           tap = true;
           natural-scroll = true;
+          dwt = true;
+          accel-speed = 0.2;
         };
       };
       outputs = {

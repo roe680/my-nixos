@@ -9,9 +9,9 @@
 }:
 {
   security.polkit = {
-  enable = true;
-  enablePkexecWrapper = true;
-};
+    enable = true;
+    enablePkexecWrapper = true;
+  };
   services.udisks2.enable = true;
   imports = [
     ./google.nix
@@ -28,37 +28,30 @@
 
   ];
   programs.noctalia-greeter = {
-  enable = true;
+    enable = true;
 
-  greeter-args = "--session niri";
-};
-nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (pkgs.lib.getName pkg) [
-  "copilot-language-server"
-];
-programs.noctalia-greeter.settings = {
-  keyboard = {
-    layout = "jp";
+    greeter-args = "--session niri";
   };
-};
-  fileSystems."/mnt/usb" = {
-    device = "/dev/sda1";
-    fsType = "exfat";
-    options = [
-      "nofail"
-      "uid=1000"
-      "gid=100"
+  nixpkgs.config.allowUnfreePredicate =
+    pkg:
+    builtins.elem (pkgs.lib.getName pkg) [
+      "copilot-language-server"
     ];
+  programs.noctalia-greeter.settings = {
+    keyboard = {
+      layout = "jp";
+    };
   };
   services.scx = {
     enable = true;
     scheduler = "scx_bpfland"; # Rust製低遅延スケジューラ
   };
   nixpkgs.config.permittedInsecurePackages = [
-   "ventoy-gtk3-1.1.17"
-];
-services.displayManager.sessionPackages = [
-  pkgs.niri
-];
+    "ventoy-gtk3-1.1.17"
+  ];
+  services.displayManager.sessionPackages = [
+    pkgs.niri
+  ];
   powerManagement.cpuFreqGovernor = "performance";
   services.power-profiles-daemon.enable = true;
 

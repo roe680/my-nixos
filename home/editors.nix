@@ -94,8 +94,6 @@
           space = {
             q = ":quit";
             o = "file_picker_in_current_buffer_directory";
-            f = ":format";
-            w = ":write";
             b = "buffer_picker";
           };
 
@@ -220,5 +218,7 @@
     nil
     nixd
     slint-lsp
+    #slint tool
+    slint-viewer
   ];
 }
