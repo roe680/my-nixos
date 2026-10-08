@@ -75,13 +75,9 @@
       inherit (inputs.nixpkgs.lib) attrValues;
       overlays = with inputs; [
         (final: prev: {
-          stdenv = prev.stdenvAdapters.overrideMkDerivationArgs (args: {
-            env = (args.env or { }) // {
-              NIX_CFLAGS_LINK =
-                toString ((args.env or { }).NIX_CFLAGS_LINK or "")
-                + " -B${mold-linker}/bin -fuse-ld=mold";
-            };
-          }) prev.stdenv;
+          stdenv = prev.stdenvAdapters.addAttrsToDerivation {
+            env.NIX_CFLAGS_LINK = "-B${mold-linker}/bin -fuse-ld=mold";
+          } prev.stdenv;
         })
         (final: prev: {
           zjstatus = zjstatus.packages.${prev.stdenv.hostPlatform.system}.default;
