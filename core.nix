@@ -244,6 +244,7 @@
     libffi
     expat
     ncurses
+    exfatprogs
 
     # ── Linux基盤
     udev

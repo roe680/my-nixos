@@ -63,10 +63,20 @@
       system = "x86_64-linux";
       hostname = "nixos";
       username = "roe";
+      pkgs-base = import nixpkgs-unstable {
+        inherit system;
+        config.allowUnfree = true;
+      };
       inherit (inputs.nixpkgs.lib) attrValues;
       overlays = with inputs; [
         (final: prev: {
-          stdenv = prev.stdenvAdapters.useMoldLinker prev.stdenv;
+          stdenv = prev.stdenvAdapters.overrideMkDerivationArgs (args: {
+            env = (args.env or { }) // {
+              NIX_CFLAGS_LINK =
+                toString ((args.env or { }).NIX_CFLAGS_LINK or "")
+                + " -fuse-ld=${pkgs-base.mold-unwrapped}/bin/mold";
+            };
+          }) prev.stdenv;
         })
         (final: prev: {
           zjstatus = zjstatus.packages.${prev.stdenv.hostPlatform.system}.default;
