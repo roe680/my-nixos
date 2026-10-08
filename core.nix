@@ -85,6 +85,7 @@
 
   # ── pkg-config を通す ─────────────────
   environment.sessionVariables = {
+    NIX_LDFLAGS = "-fuse-ld=mold";
     PKG_CONFIG_PATH = lib.makeSearchPath "lib/pkgconfig" [
       pkgs.fontconfig.dev
       pkgs.systemd.dev
@@ -245,6 +246,7 @@
     expat
     ncurses
     exfatprogs
+    mold
 
     # ── Linux基盤
     udev

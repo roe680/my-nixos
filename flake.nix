@@ -63,19 +63,8 @@
       system = "x86_64-linux";
       hostname = "nixos";
       username = "roe";
-      pkgs-base = import nixpkgs-unstable {
-        inherit system;
-        config.allowUnfree = true;
-      };
       inherit (inputs.nixpkgs.lib) attrValues;
       overlays = with inputs; [
-        (final: prev: {
-          stdenv =
-            if prev.stdenv.cc ? libc_dev then
-              prev.stdenvAdapters.useMoldLinker prev.stdenv
-            else
-              prev.stdenv;
-        })
         (final: prev: {
           zjstatus = zjstatus.packages.${prev.stdenv.hostPlatform.system}.default;
         })
