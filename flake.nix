@@ -67,6 +67,11 @@
         inherit system;
         config.allowUnfree = true;
       };
+      mold-linker = pkgs-base.runCommand "mold-linker" { } ''
+        mkdir -p $out/bin
+        ln -s ${pkgs-base.mold-unwrapped}/bin/mold $out/bin/ld.mold
+        ln -s ${pkgs-base.mold-unwrapped}/bin/mold $out/bin/mold
+      '';
       inherit (inputs.nixpkgs.lib) attrValues;
       overlays = with inputs; [
         (final: prev: {
@@ -74,7 +79,7 @@
             env = (args.env or { }) // {
               NIX_CFLAGS_LINK =
                 toString ((args.env or { }).NIX_CFLAGS_LINK or "")
-                + " -fuse-ld=${pkgs-base.mold-unwrapped}/bin/mold";
+                + " -B${mold-linker}/bin -fuse-ld=mold";
             };
           }) prev.stdenv;
         })
