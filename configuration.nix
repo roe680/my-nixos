@@ -133,6 +133,11 @@
     shell = pkgs.nushell;
   };
   environment.shells = [ pkgs.nushell ];
+  environment.sessionVariables.LIBCLANG_PATH =
+    "/home/${username}/.rustup/toolchains/esp/xtensa-esp32-elf-clang/esp-20.1.1_20250829/esp-clang/lib";
+  environment.extraInit = ''
+    export PATH="/home/${username}/.rustup/toolchains/esp/xtensa-esp-elf/esp-15.2.0_20250920/xtensa-esp-elf/bin:$PATH"
+  '';
   environment.pathsToLink = [
     "/share/applications"
     "/share/xdg-desktop-portal"
