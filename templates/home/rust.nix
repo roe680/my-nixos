@@ -3,10 +3,6 @@
   home.file.".cargo/config.toml".text = ''
     [target.x86_64-unknown-linux-gnu]
     linker = "${pkgs.clang}/bin/clang"
-    rustflags = [
-      "-C"
-      "link-arg=-fuse-ld=${pkgs.mold}/bin/mold"
-    ]
 
     [target.x86_64-pc-windows-gnu]
     linker = "${pkgs.llvmPackages.lld}/bin/lld"
@@ -19,7 +15,6 @@
     cargo-binutils
     cargo-edit
     cargo-watch
-    mold
     clang
   ];
 

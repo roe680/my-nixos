@@ -63,17 +63,19 @@
       system = "x86_64-linux";
       hostname = "nixos";
       username = "roe";
-      pkgs-stable = import nixpkgs {
-        inherit system;
-        config.allowUnfree = true;
-      };
       inherit (inputs.nixpkgs.lib) attrValues;
       overlays = with inputs; [
-        # ...
+        (final: prev: {
+          stdenv = prev.stdenvAdapters.useMoldLinker prev.stdenv;
+        })
         (final: prev: {
           zjstatus = zjstatus.packages.${prev.stdenv.hostPlatform.system}.default;
         })
       ];
+      pkgs-stable = import nixpkgs {
+        inherit system overlays;
+        config.allowUnfree = true;
+      };
     in
     {
 
@@ -89,6 +91,7 @@
         };
         modules = [
           ./configuration.nix
+          { nixpkgs.overlays = overlays; }
           home-manager.nixosModules.home-manager
           {
             home-manager.backupFileExtension = "backup";

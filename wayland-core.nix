@@ -34,11 +34,6 @@ in
     GTK_USE_PORTAL = "1";
     EDITOR = "hx";
     NIXOS_OZONE_WL = "1";
-    "LD" = "mold";
-    # GCC/Clang に mold を使わせる
-    NIX_LDFLAGS = "-fuse-ld=mold";
-    # または
-    LDFLAGS = "-fuse-ld=mold";
     MOZ_ENABLE_WAYLAND = "1";
     QT_QPA_PLATFORM = "wayland;xcb";
     GDK_BACKEND = "wayland,x11";
