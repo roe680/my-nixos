@@ -12,6 +12,7 @@
     ./development.nix
     ./apps.nix
     ./noctalia.nix
+    ../templates/home/rust.nix
   ];
 
   home = {
