@@ -10,7 +10,6 @@
 
   home.packages = with pkgs; [
     rustup
-    rustfmt
     cargo-flamegraph
     cargo-binutils
     cargo-edit
