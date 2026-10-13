@@ -65,6 +65,7 @@
   };
   environment.systemPackages = with pkgs; [
     asusctl
+    alsa-utils
   ];
   boot.extraModprobeConfig = "options usbhid mousepoll=1 kbpoll=1";
 

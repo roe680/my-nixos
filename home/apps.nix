@@ -24,6 +24,8 @@
 
 
   home.packages = with pkgs; [
+    easyeffects
+    rust-rover
     gimp
     kicad
     music-discord-rpc

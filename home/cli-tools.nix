@@ -52,6 +52,11 @@
   };
 
   home.packages = with pkgs; [
+    nvtopPackages.intel
+    intel-gpu-tools
+    dmidecode
+    psutils
+    exfatprogs
     copilot-language-server
     usbutils
     # ファイル操作

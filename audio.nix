@@ -26,6 +26,11 @@
     alsa.support32Bit = true;
     pulse.enable = true;
     wireplumber.enable = true;
+    extraConfig.pipewire."10-audio-quality" = {
+      "context.properties" = {
+        "default.clock.rate" = 48000;
+      };
+    };
   };
 
   security.rtkit.enable = true;

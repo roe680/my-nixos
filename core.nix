@@ -51,6 +51,10 @@
   programs.nix-ld = {
     enable = true;
     libraries = with pkgs; [
+      xorg.libXcursor
+      xorg.libXrandr
+      xorg.libXi
+      xorg.libX11
       # toolchain runtime
       stdenv.cc.cc
 
