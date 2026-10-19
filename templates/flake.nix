@@ -196,6 +196,54 @@
           '';
         };
 
+        # 🦀 ESP-RS
+        esp-rs = pkgs.mkShell {
+          packages =
+            ((import ./home/rust.nix {
+              inherit pkgs;
+            }).home.packages or [ ]
+            )
+            ++ esp.environment.systemPackages
+            ++ (with pkgs; [
+              probe-rs-tools
+              pkg-config
+              libusb1
+              dfu-util
+              minicom
+              picocom
+            ]);
+
+          LIBCLANG_PATH = "/home/${username}/.rustup/toolchains/esp/xtensa-esp32-elf-clang/esp-20.1.1_20250829/esp-clang/lib";
+
+          shellHook = ''
+            export PATH="/home/${username}/.rustup/toolchains/esp/xtensa-esp-elf/esp-15.2.0_20250920/xtensa-esp-elf/bin:$PATH"
+
+            echo "🦀 [to#esp-rs] ESP-RS 環境をロードしました"
+          '';
+        };
+
+        # 🔌 PlatformIO
+        platformio = pkgs.mkShell {
+          packages =
+            ((import ./home/cpp.nix {
+              inherit pkgs;
+            }).home.packages or [ ]
+            )
+            ++ (with pkgs; [
+              platformio-core
+              platformio-core.udev
+              python3
+              ccache
+              dfu-util
+              minicom
+              picocom
+            ]);
+
+          shellHook = ''
+            echo "🔌 [to#platformio] PlatformIO 環境をロードしました"
+          '';
+        };
+
         # ⚡ Zig
         zig = pkgs.mkShell {
           packages =
