@@ -71,6 +71,7 @@
     package = pkgs.ollama-vulkan;
 
     environmentVariables = {
+  OLLAMA_CONTEXT_LENGTH = "8192";
       OLLAMA_VULKAN = "1";
       OLLAMA_IGPU_ENABLE = "1"; # iGPUの除外を解除(必須)
       OLLAMA_NUM_PARALLEL = "1";

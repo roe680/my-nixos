@@ -2,10 +2,11 @@
 {
   home.file.".cargo/config.toml".text = ''
     [target.x86_64-unknown-linux-gnu]
-    linker = "${pkgs.mold}/bin/mold"
+linker = "cc"
+rustflags = ["-C", "link-arg=-fuse-ld=mold"]
 
-    [target.x86_64-pc-windows-gnu]
-    linker = "${pkgs.llvmPackages.lld}/bin/lld"
+[target.x86_64-pc-windows-gnu]
+linker = "x86_64-w64-mingw32-gcc"
   '';
 
   home.packages = with pkgs; [

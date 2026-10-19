@@ -131,6 +131,8 @@ in
     clangdRefreshGuard
     arduinoLspSerialize
     python3
+   platformio-core
+   platformio-core.udev 
     zls
   ];
 
