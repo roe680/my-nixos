@@ -222,8 +222,11 @@
           '';
         };
 
+          services.udev.packages = [ pkgs.platformio-core.udev ];
         # 🔌 PlatformIO
+        
         platformio = pkgs.mkShell {
+          
           packages =
             ((import ./home/cpp.nix {
               inherit pkgs;
@@ -231,17 +234,26 @@
             )
             ++ (with pkgs; [
               platformio-core
-              platformio-core.udev
+              platformio
               python3
+              avrdude
               ccache
               dfu-util
               minicom
               picocom
             ]);
+shellHook = ''
+  echo "🔌 [to#platformio] PlatformIO 環境をロードしました"
 
-          shellHook = ''
-            echo "🔌 [to#platformio] PlatformIO 環境をロードしました"
-          '';
+  if [ -d "$HOME/.platformio/packages" ]; then
+    find "$HOME/.platformio/packages" \
+      -type f -perm /111 \
+      -exec sed -i \
+        '1s|^#!/bin/bash|#!${pkgs.bash}/bin/bash|' {} +
+  fi
+
+  echo "🔌 [to#platformio] PlatformIO 環境をロードしました"
+'';
         };
 
         # ⚡ Zig

@@ -59,6 +59,7 @@
     exfatprogs
     copilot-language-server
     usbutils
+    pciutils
     # ファイル操作
     fastfetch
     lazygit

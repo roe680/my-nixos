@@ -88,7 +88,21 @@
         };
         modules = [
           ./configuration.nix
-          { nixpkgs.overlays = overlays; }
+          {
+            nixpkgs.overlays = overlays ++ [
+              (final: prev: {
+                linuxPackages_zen = prev.linuxPackages_zen.extend (
+                  kernelFinal: kernelPrev: {
+                    v4l2loopback = kernelPrev.v4l2loopback.overrideAttrs (old: {
+                      postInstall = (old.postInstall or "") + ''
+                        rm -f "$out/lib/modules/${kernelFinal.kernel.modDirVersion}"/modules.*
+                      '';
+                    });
+                  }
+                );
+              })
+            ];
+          }
           home-manager.nixosModules.home-manager
           {
             home-manager.backupFileExtension = "backup";

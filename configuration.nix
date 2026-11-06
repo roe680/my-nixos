@@ -47,7 +47,7 @@
     scheduler = "scx_bpfland"; # Rust製低遅延スケジューラ
   };
   nixpkgs.config.permittedInsecurePackages = [
-    "ventoy-gtk3-1.1.17"
+    "ventoy-gtk3-1.1.18"
   ];
   services.displayManager.sessionPackages = [
     pkgs.niri
@@ -71,7 +71,7 @@
     package = pkgs.ollama-vulkan;
 
     environmentVariables = {
-  OLLAMA_CONTEXT_LENGTH = "8192";
+      OLLAMA_CONTEXT_LENGTH = "8192";
       OLLAMA_VULKAN = "1";
       OLLAMA_IGPU_ENABLE = "1"; # iGPUの除外を解除(必須)
       OLLAMA_NUM_PARALLEL = "1";
@@ -119,8 +119,20 @@
   services.upower.enable = true;
   services.dbus.enable = true;
   networking.hostName = hostname;
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
+  boot.loader = {
+    systemd-boot = {
+      enable = true;
+      edk2-uefi-shell.enable = true;
+      windows."windows" = {
+        title = "Windows";
+        efiDeviceHandle = "HD0b"
+        ; sortKey = "a_windows";
+      };
+    };
+
+    timeout = null;
+    efi.canTouchEfiVariables = true;
+  };
   users.users.${username} = {
     isNormalUser = true;
     extraGroups = [
@@ -134,8 +146,7 @@
     shell = pkgs.nushell;
   };
   environment.shells = [ pkgs.nushell ];
-  environment.sessionVariables.LIBCLANG_PATH =
-    "/home/${username}/.rustup/toolchains/esp/xtensa-esp32-elf-clang/esp-20.1.1_20250829/esp-clang/lib";
+  environment.sessionVariables.LIBCLANG_PATH = "/home/${username}/.rustup/toolchains/esp/xtensa-esp32-elf-clang/esp-20.1.1_20250829/esp-clang/lib";
   environment.extraInit = ''
     export PATH="/home/${username}/.rustup/toolchains/esp/xtensa-esp-elf/esp-15.2.0_20250920/xtensa-esp-elf/bin:$PATH"
   '';
