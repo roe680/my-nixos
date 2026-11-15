@@ -211,6 +211,26 @@
         "type": "github"
       }
     },
+    "microchip": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs-unstable"
+        ]
+      },
+      "locked": {
+        "lastModified": 1794603719,
+        "narHash": "sha256-YeqDZDs2wkkWbgzPav+l2DaJroICpD14ObySSjyrrUY=",
+        "owner": "cormacc",
+        "repo": "nix-microchip",
+        "rev": "de8d5a981d78a62bb35339530571259299ff070b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "cormacc",
+        "repo": "nix-microchip",
+        "type": "github"
+      }
+    },
     "niri": {
       "inputs": {
         "niri-stable": "niri-stable",
@@ -548,6 +568,7 @@
         "agenix": "agenix",
         "elephant": "elephant",
         "home-manager": "home-manager",
+        "microchip": "microchip",
         "niri": "niri",
         "nix-gaming": "nix-gaming",
         "nix-hazkey": "nix-hazkey",

@@ -6,6 +6,10 @@
     niri.url = "github:sodiboo/niri-flake";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
+    microchip = {
+      url = "github:cormacc/nix-microchip";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
     nix-hazkey = {
       url = "github:aster-void/nix-hazkey";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
@@ -65,6 +69,7 @@
       username = "roe";
       inherit (inputs.nixpkgs.lib) attrValues;
       overlays = with inputs; [
+        microchip.overlays.default
         (final: prev: {
           zjstatus = zjstatus.packages.${prev.stdenv.hostPlatform.system}.default;
         })
@@ -73,8 +78,73 @@
         inherit system overlays;
         config.allowUnfree = true;
       };
+      pkgs = import nixpkgs-unstable {
+        inherit system overlays;
+        config.allowUnfree = true;
+      };
+      espTools = [
+        "espflash"
+        "esp-generate"
+        "espup"
+      ];
     in
     {
+      devShells.${system} = {
+        esp = pkgs.mkShell {
+          packages = with pkgs; [
+            rustup
+            cargo
+            rustc
+            cargo-binstall
+            pkg-config
+            openssl
+            systemd
+          ];
+
+          shellHook = ''
+            export PATH="$HOME/.cargo/bin:$PATH"
+            cargo binstall --no-confirm --locked ${
+              pkgs.lib.concatStringsSep " " espTools
+            } || true
+
+            if command -v espup >/dev/null 2>&1; then
+              if [ ! -f "$HOME/export-esp.sh" ]; then
+                espup install
+              fi
+
+              if [ -f "$HOME/export-esp.sh" ]; then
+                source "$HOME/export-esp.sh"
+              fi
+            fi
+          '';
+        };
+
+        pic = pkgs.mkShell {
+          packages = [
+            pkgs.mplab-x
+            (pkgs.writeShellScriptBin "pic-write" ''
+              set -eu
+
+              if [ "$#" -ne 1 ]; then
+                echo "usage: pic-write firmware.hex" >&2
+                exit 2
+              fi
+
+              firmware=$1
+              if [ ! -f "$firmware" ]; then
+                echo "pic-write: HEX file not found: $firmware" >&2
+                exit 1
+              fi
+
+              exec ipecmd -TPSNAP -P18F47Q43 -F"$firmware" -E -M -OL
+            '')
+          ];
+          shellHook = ''
+            echo "PIC18F47Q43 / MPLAB SNAP environment"
+            echo "Write a HEX file with: pic-write firmware.hex"
+          '';
+        };
+      };
 
       nixosConfigurations.${hostname} = nixpkgs-unstable.lib.nixosSystem {
         inherit system;

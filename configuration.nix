@@ -13,6 +13,9 @@
     enablePkexecWrapper = true;
   };
   services.udisks2.enable = true;
+  services.udev.packages = [
+    pkgs.mplab-x-unwrapped
+  ];
   imports = [
     ./google.nix
     ./steam.nix
@@ -42,9 +45,9 @@
       layout = "jp";
     };
   };
-  services.scx = {
+  services.scx-loader = {
     enable = true;
-    scheduler = "scx_bpfland"; # Rust製低遅延スケジューラ
+    config.default_sched = "scx_bpfland"; # Rust製低遅延スケジューラ
   };
   nixpkgs.config.permittedInsecurePackages = [
     "ventoy-gtk3-1.1.18"
