@@ -28,7 +28,6 @@
     rust-rover
     clion
     gimp
-    kicad
     music-discord-rpc
   	neovide
     ventoy-full-gtk
