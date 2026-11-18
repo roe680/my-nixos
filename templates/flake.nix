@@ -275,6 +275,14 @@ shellHook = ''
               inherit pkgs;
             }).home.packages or [ ];
 
+          LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [
+            pkgs.ncurses
+            pkgs.libedit
+            pkgs.swift
+            pkgs.swift-corelibs-libdispatch
+            pkgs.glibc
+          ];
+
           shellHook = ''
             echo "🐦 [to#swift] Swift環境をロードしました"
           '';

@@ -2,8 +2,14 @@
 {
   home.packages = with pkgs; [
     swift
+    swiftpm
     swift-format
     sourcekit-lsp
+    lldb
+    clang
+    pkg-config
+    ncurses
+    libedit
   ];
 
   programs.helix.languages = {
