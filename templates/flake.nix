@@ -268,6 +268,18 @@ shellHook = ''
           '';
         };
 
+        # 🐦 Swift
+        swift = pkgs.mkShell {
+          packages =
+            (import ./home/swift.nix {
+              inherit pkgs;
+            }).home.packages or [ ];
+
+          shellHook = ''
+            echo "🐦 [to#swift] Swift環境をロードしました"
+          '';
+        };
+
         # 🛠 C/C++
         clang-cpp = pkgs.mkShell {
           packages =
