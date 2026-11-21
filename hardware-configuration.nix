@@ -52,7 +52,11 @@
     # Arduino UNO R4 WiFi (通常モード & ブートローダーモード)
     SUBSYSTEMS=="usb", ATTRS{idVendor}=="2341", ATTRS{idProduct}=="006a", MODE="0666", GROUP="dialout"
     SUBSYSTEMS=="usb", ATTRS{idVendor}=="2341", ATTRS{idProduct}=="036a", MODE="0666", GROUP="dialout"
-  '';
+    # Arduino Uno R3 (本物)
+    SUBSYSTEM=="tty", ATTRS{idVendor}=="2341", ATTRS{idProduct}=="0043", MODE="0666", GROUP="dialout", SYMLINK+="arduino_uno"
+
+    # Arduino Uno R3 (USB)
+    SUBSYSTEMS=="usb", ATTRS{idVendor}=="2341", ATTRS{idProduct}=="0043", MODE="0666", GROUP="dialout"  '';
 
   # 2. あなたのユーザーアカウントを 'dialout' グループに追加
   users.users.${username} = {
